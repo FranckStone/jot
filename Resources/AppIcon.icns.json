@@ -1,0 +1,5 @@
+{
+  "origin": "Authored dot-and-j monogram in Resources/icon.svg",
+  "method": "scripts/build-icon.sh: rsvg-convert, sips, iconutil",
+  "generated": false
+}

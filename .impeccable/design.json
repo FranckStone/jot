@@ -1,0 +1,580 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-07T02:59:42.046716+00:00",
+  "title": "Design System: Jot",
+  "extensions": {
+    "colorMeta": {
+      "backdrop": {
+        "role": "neutral",
+        "displayName": "Window gray (light)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00265 286.35)",
+          "oklch(26.4% 0.00265 286.35)",
+          "oklch(37.9% 0.00265 286.35)",
+          "oklch(49.3% 0.00265 286.35)",
+          "oklch(60.7% 0.00265 286.35)",
+          "oklch(72.1% 0.00265 286.35)",
+          "oklch(83.6% 0.00265 286.35)",
+          "oklch(95.0% 0.00265 286.35)"
+        ]
+      },
+      "backdrop-dark": {
+        "role": "neutral",
+        "displayName": "Window gray (dark)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00382 286.09)",
+          "oklch(26.4% 0.00382 286.09)",
+          "oklch(37.9% 0.00382 286.09)",
+          "oklch(49.3% 0.00382 286.09)",
+          "oklch(60.7% 0.00382 286.09)",
+          "oklch(72.1% 0.00382 286.09)",
+          "oklch(83.6% 0.00382 286.09)",
+          "oklch(95.0% 0.00382 286.09)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Writing paper (light)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00000 0.00)",
+          "oklch(26.4% 0.00000 0.00)",
+          "oklch(37.9% 0.00000 0.00)",
+          "oklch(49.3% 0.00000 0.00)",
+          "oklch(60.7% 0.00000 0.00)",
+          "oklch(72.1% 0.00000 0.00)",
+          "oklch(83.6% 0.00000 0.00)",
+          "oklch(95.0% 0.00000 0.00)"
+        ]
+      },
+      "paper-dark": {
+        "role": "neutral",
+        "displayName": "Writing paper (dark)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00369 286.14)",
+          "oklch(26.4% 0.00369 286.14)",
+          "oklch(37.9% 0.00369 286.14)",
+          "oklch(49.3% 0.00369 286.14)",
+          "oklch(60.7% 0.00369 286.14)",
+          "oklch(72.1% 0.00369 286.14)",
+          "oklch(83.6% 0.00369 286.14)",
+          "oklch(95.0% 0.00369 286.14)"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Sidebar reference gray (light)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00267 286.35)",
+          "oklch(26.4% 0.00267 286.35)",
+          "oklch(37.9% 0.00267 286.35)",
+          "oklch(49.3% 0.00267 286.35)",
+          "oklch(60.7% 0.00267 286.35)",
+          "oklch(72.1% 0.00267 286.35)",
+          "oklch(83.6% 0.00267 286.35)",
+          "oklch(95.0% 0.00267 286.35)"
+        ]
+      },
+      "sidebar-dark": {
+        "role": "neutral",
+        "displayName": "Sidebar reference gray (dark)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00544 286.05)",
+          "oklch(26.4% 0.00544 286.05)",
+          "oklch(37.9% 0.00544 286.05)",
+          "oklch(49.3% 0.00544 286.05)",
+          "oklch(60.7% 0.00544 286.05)",
+          "oklch(72.1% 0.00544 286.05)",
+          "oklch(83.6% 0.00544 286.05)",
+          "oklch(95.0% 0.00544 286.05)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Graphite ink (light)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00381 286.10)",
+          "oklch(26.4% 0.00381 286.10)",
+          "oklch(37.9% 0.00381 286.10)",
+          "oklch(49.3% 0.00381 286.10)",
+          "oklch(60.7% 0.00381 286.10)",
+          "oklch(72.1% 0.00381 286.10)",
+          "oklch(83.6% 0.00381 286.10)",
+          "oklch(95.0% 0.00381 286.10)"
+        ]
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Graphite ink (dark)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00265 286.35)",
+          "oklch(26.4% 0.00265 286.35)",
+          "oklch(37.9% 0.00265 286.35)",
+          "oklch(49.3% 0.00265 286.35)",
+          "oklch(60.7% 0.00265 286.35)",
+          "oklch(72.1% 0.00265 286.35)",
+          "oklch(83.6% 0.00265 286.35)",
+          "oklch(95.0% 0.00265 286.35)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted gray ink (light)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00794 286.09)",
+          "oklch(26.4% 0.00794 286.09)",
+          "oklch(37.9% 0.00794 286.09)",
+          "oklch(49.3% 0.00794 286.09)",
+          "oklch(60.7% 0.00794 286.09)",
+          "oklch(72.1% 0.00794 286.09)",
+          "oklch(83.6% 0.00794 286.09)",
+          "oklch(95.0% 0.00794 286.09)"
+        ]
+      },
+      "muted-dark": {
+        "role": "neutral",
+        "displayName": "Muted gray ink (dark)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00841 286.20)",
+          "oklch(26.4% 0.00841 286.20)",
+          "oklch(37.9% 0.00841 286.20)",
+          "oklch(49.3% 0.00841 286.20)",
+          "oklch(60.7% 0.00841 286.20)",
+          "oklch(72.1% 0.00841 286.20)",
+          "oklch(83.6% 0.00841 286.20)",
+          "oklch(95.0% 0.00841 286.20)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Graphite accent (light)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00708 285.98)",
+          "oklch(26.4% 0.00708 285.98)",
+          "oklch(37.9% 0.00708 285.98)",
+          "oklch(49.3% 0.00708 285.98)",
+          "oklch(60.7% 0.00708 285.98)",
+          "oklch(72.1% 0.00708 285.98)",
+          "oklch(83.6% 0.00708 285.98)",
+          "oklch(95.0% 0.00708 285.98)"
+        ]
+      },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "Graphite accent (dark)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00538 286.29)",
+          "oklch(26.4% 0.00538 286.29)",
+          "oklch(37.9% 0.00538 286.29)",
+          "oklch(49.3% 0.00538 286.29)",
+          "oklch(60.7% 0.00538 286.29)",
+          "oklch(72.1% 0.00538 286.29)",
+          "oklch(83.6% 0.00538 286.29)",
+          "oklch(95.0% 0.00538 286.29)"
+        ]
+      },
+      "on-accent": {
+        "role": "neutral",
+        "displayName": "Accent foreground (light)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00000 0.00)",
+          "oklch(26.4% 0.00000 0.00)",
+          "oklch(37.9% 0.00000 0.00)",
+          "oklch(49.3% 0.00000 0.00)",
+          "oklch(60.7% 0.00000 0.00)",
+          "oklch(72.1% 0.00000 0.00)",
+          "oklch(83.6% 0.00000 0.00)",
+          "oklch(95.0% 0.00000 0.00)"
+        ]
+      },
+      "on-accent-dark": {
+        "role": "neutral",
+        "displayName": "Accent foreground (dark)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00369 286.14)",
+          "oklch(26.4% 0.00369 286.14)",
+          "oklch(37.9% 0.00369 286.14)",
+          "oklch(49.3% 0.00369 286.14)",
+          "oklch(60.7% 0.00369 286.14)",
+          "oklch(72.1% 0.00369 286.14)",
+          "oklch(83.6% 0.00369 286.14)",
+          "oklch(95.0% 0.00369 286.14)"
+        ]
+      },
+      "selected": {
+        "role": "neutral",
+        "displayName": "Selection gray (light)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00539 286.29)",
+          "oklch(26.4% 0.00539 286.29)",
+          "oklch(37.9% 0.00539 286.29)",
+          "oklch(49.3% 0.00539 286.29)",
+          "oklch(60.7% 0.00539 286.29)",
+          "oklch(72.1% 0.00539 286.29)",
+          "oklch(83.6% 0.00539 286.29)",
+          "oklch(95.0% 0.00539 286.29)"
+        ]
+      },
+      "selected-dark": {
+        "role": "neutral",
+        "displayName": "Selection gray (dark)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00695 286.02)",
+          "oklch(26.4% 0.00695 286.02)",
+          "oklch(37.9% 0.00695 286.02)",
+          "oklch(49.3% 0.00695 286.02)",
+          "oklch(60.7% 0.00695 286.02)",
+          "oklch(72.1% 0.00695 286.02)",
+          "oklch(83.6% 0.00695 286.02)",
+          "oklch(95.0% 0.00695 286.02)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Fine gray rule (light)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00540 286.29)",
+          "oklch(26.4% 0.00540 286.29)",
+          "oklch(37.9% 0.00540 286.29)",
+          "oklch(49.3% 0.00540 286.29)",
+          "oklch(60.7% 0.00540 286.29)",
+          "oklch(72.1% 0.00540 286.29)",
+          "oklch(83.6% 0.00540 286.29)",
+          "oklch(95.0% 0.00540 286.29)"
+        ]
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "Fine gray rule (dark)",
+        "tonalRamp": [
+          "oklch(15.0% 0.00683 286.05)",
+          "oklch(26.4% 0.00683 286.05)",
+          "oklch(37.9% 0.00683 286.05)",
+          "oklch(49.3% 0.00683 286.05)",
+          "oklch(60.7% 0.00683 286.05)",
+          "oklch(72.1% 0.00683 286.05)",
+          "oklch(83.6% 0.00683 286.05)",
+          "oklch(95.0% 0.00683 286.05)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "Sidebar Jot. identity."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Empty canvas invitation."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Main workbench heading."
+      },
+      "detail-title": {
+        "displayName": "Detail Title",
+        "purpose": "Editable detail-window name."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default native text detail editor."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "JSON and table source detail editor."
+      },
+      "card-title": {
+        "displayName": "Card Title",
+        "purpose": "Card header."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Native secondary controls."
+      },
+      "control-primary": {
+        "displayName": "Control Primary",
+        "purpose": "Primary actions and list titles."
+      },
+      "metadata": {
+        "displayName": "Metadata",
+        "purpose": "Save status and supporting labels."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Card type and operation captions."
+      }
+    },
+    "motion": [
+      {
+        "name": "save-debounce",
+        "value": "0.5s",
+        "purpose": "Delay local persistence after edits or layout changes; behavior timing, not animation."
+      },
+      {
+        "name": "button-feedback",
+        "value": "80ms press / 140ms hover / 180ms exit",
+        "purpose": "Interruptible color, border and centered 0.96 press scale; cubic-bezier(0.16,1,0.3,1). Reduce Motion keeps 80ms color feedback without scaling."
+      },
+      {
+        "name": "sidebar-toggle",
+        "value": "220ms",
+        "purpose": "Slide the 220pt sidebar out while expanding the canvas; Reduce Motion changes layout immediately. Persisted choice with keyboard shortcut Control–Command–S."
+      },
+      {
+        "name": "find-query-debounce",
+        "value": "120ms",
+        "purpose": "Delay incremental literal searches while typing in the find field."
+      }
+    ],
+    "native": {
+      "platform": "macOS",
+      "framework": "AppKit",
+      "units": "Numeric CSS pixel values in frontmatter represent AppKit points; native display scaling applies.",
+      "appearancePairs": {
+        "backdrop": [
+          "backdrop",
+          "backdrop-dark"
+        ],
+        "paper": [
+          "paper",
+          "paper-dark"
+        ],
+        "sidebar": [
+          "sidebar",
+          "sidebar-dark"
+        ],
+        "ink": [
+          "ink",
+          "ink-dark"
+        ],
+        "muted": [
+          "muted",
+          "muted-dark"
+        ],
+        "accent": [
+          "accent",
+          "accent-dark"
+        ],
+        "on-accent": [
+          "on-accent",
+          "on-accent-dark"
+        ],
+        "selected": [
+          "selected",
+          "selected-dark"
+        ],
+        "line": [
+          "line",
+          "line-dark"
+        ]
+      },
+      "systemErrorColor": "NSColor.systemRed",
+      "fonts": {
+        "system": "NSFont.systemFont",
+        "monospaced": "NSFont.monospacedSystemFont"
+      },
+      "geometry": {
+        "defaultContentRect": {
+          "width": 1360,
+          "height": 860
+        },
+        "minimumWindowSize": {
+          "width": 1080,
+          "height": 680
+        },
+        "sidebarWidth": 220,
+        "itemRowHeight": 49,
+        "toolbarHeight": 44,
+        "toolbarRadius": 18,
+        "cardRadius": 14,
+        "cardDefault": {
+          "width": 360,
+          "height": 320
+        },
+        "cardMinimum": {
+          "width": 280,
+          "height": 220
+        },
+        "cardMaximum": {
+          "width": 1600,
+          "height": 1600
+        },
+        "cardHeaderHeight": 48,
+        "cardBorder": {
+          "rest": 1,
+          "selected": 2
+        },
+        "canvasMinimum": {
+          "width": 1800,
+          "height": 1200
+        },
+        "canvasMagnification": {
+          "minimum": 0.35,
+          "maximum": 2
+        },
+        "detailContentRect": {
+          "width": 900,
+          "height": 680
+        },
+        "detailMinimumWindowSize": {
+          "width": 560,
+          "height": 400
+        },
+        "controlCapsuleHeight": 34,
+        "controlCapsuleRadius": 17
+      },
+      "sourceFiles": [
+        "Sources/Jot/Components.swift",
+        "Sources/Jot/WorkbenchViews.swift",
+        "Sources/Jot/WorkbenchWindowController.swift",
+        "Sources/JotCore/Workbench.swift"
+      ],
+      "materials": {
+        "sidebar": "NSVisualEffectView .sidebar / .withinWindow / .active; not an exact sidebar palette fill",
+        "macOS26Plus": "NSGlassEffectView .regular, contentView, cornerRadius and optional tintColor",
+        "macOS27Plus": "effectIsInteractive = true",
+        "macOS13Through25": "Untinted glassPanel uses NSVisualEffectView .headerView / .withinWindow / .active; tinted primary panel uses opaque SurfaceView. Button factory uses .rounded bezel."
+      },
+      "runtimeVerification": "Source-verified documentation; runtime coverage of every supported macOS release is not claimed.",
+      "contrast": {
+        "method": "WCAG sRGB token calculation; opaque reference surfaces only, not translucent material measurement",
+        "mutedLight": {
+          "selected": 5.15,
+          "paper": 6.65,
+          "sidebarReference": 5.64,
+          "backdrop": 6.0
+        },
+        "mutedDark": {
+          "selected": 6.03,
+          "paper": 7.76,
+          "sidebarReference": 7.27,
+          "backdrop": 8.52
+        }
+      },
+      "findReplace": {
+        "surface": "Localized two-row panel in text/JSON/raw-table detail windows",
+        "controls": "34pt input rows, shared feedback buttons, match count, previous/next, case and whole-word options",
+        "behavior": "Command-F opens; Escape closes; native undo for both current and all replacements; at most 1000 transient match highlights",
+        "inputFocus": "10pt rounded outer surface; 0.75pt resting line and 1.5pt graphite focus outline; 12pt inset; inner native focus ring disabled; 140ms color transition (80ms Reduce Motion)."
+      },
+      "detailTitleInput": "Shared TextInputSurface: 38pt high, 10pt horizontal padding, no resting outline; 1.5pt graphite rounded focus border instead of native blue inner ring. 19pt semibold title.",
+      "cardActions": {
+        "geometry": "28x28pt square, 6pt radius, 6pt gap, zero alignment insets",
+        "actions": [
+          "复制卡片",
+          "删除卡片（⌘Z 可撤销）",
+          "展开编辑／预览"
+        ],
+        "behavior": "Actions target the clicked card UUID. Delete disabled while its source is processing; removal and duplication share existing undo history."
+      }
+    },
+    "preview": {
+      "fidelity": "Geometry and palette references only. Production uses native AppKit with shared FeedbackButton state rendering; native tracking, actions and accessibility remain authoritative.",
+      "tonalRamps": "Synthesized OKLCH lightness ramps for documentation only; not production palette tokens.",
+      "stateStyles": "Browser preview hover/focus/press CSS is an approximation, not shipping AppKit styling. No CSS shadow or blur simulates Liquid Glass."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary action capsule",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Shared native FeedbackButton: visible resting boundary, hover color transition, 96% press scale, keyboard focus, disabled feedback and reduced-motion support.",
+      "html": "<button class=\"ds-primary\">添加文件</button>",
+      "css": ".ds-primary{font:500 12px system-ui;height:34px;padding:0 13px;border:1px solid #303034;border-radius:17px;background:#303034;color:#FFFFFF;cursor:pointer;transition:background-color .14s,border-color .14s,transform .14s cubic-bezier(.16,1,.3,1)}.ds-primary:hover:not(:disabled){background:#48484F}.ds-primary:active:not(:disabled){background:#1D1D21;transform:scale(.96);transition-duration:.08s}.ds-primary:focus-visible{outline:2px solid Highlight;outline-offset:2px}.ds-primary:disabled{opacity:.4;cursor:default}@media(prefers-reduced-motion:reduce){.ds-primary:active:not(:disabled){transform:none}.ds-primary{transition-duration:.08s}}@media(prefers-color-scheme:dark){.ds-primary{background:#E4E4E8;color:#242426;border-color:#E4E4E8}.ds-primary:hover:not(:disabled){background:#F5F5F8}.ds-primary:active:not(:disabled){background:#C5C5CE}}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Shared native FeedbackButton: visible resting boundary, hover color transition, 96% press scale, keyboard focus, disabled feedback and reduced-motion support.",
+      "html": "<button class=\"ds-secondary\">新建文本</button>",
+      "css": ".ds-secondary{font:400 12px system-ui;height:34px;padding:0 13px;border:1px solid #C9C9D1;border-radius:10px;background:#FAFAFC;color:#1D1D1F;cursor:pointer;transition:background-color .14s,border-color .14s,transform .14s cubic-bezier(.16,1,.3,1)}.ds-secondary:hover:not(:disabled){background:#E6E6ED}.ds-secondary:active:not(:disabled){background:#D3D3DC;transform:scale(.96);transition-duration:.08s}.ds-secondary:focus-visible{outline:2px solid Highlight;outline-offset:2px}.ds-secondary:disabled{opacity:.4;cursor:default}@media(prefers-reduced-motion:reduce){.ds-secondary:active:not(:disabled){transform:none}.ds-secondary{transition-duration:.08s}}@media(prefers-color-scheme:dark){.ds-secondary{background:#323237;color:#F5F5F7;border-color:#62626D}.ds-secondary:hover:not(:disabled){background:#45454D}.ds-secondary:active:not(:disabled){background:#55555E}}"
+    },
+    {
+      "name": "Workbench search",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "Immediate native search by card name and textual content.",
+      "html": "<input type=\"search\" class=\"ds-search\" placeholder=\"搜索名称与文本\" aria-label=\"搜索名称与文本\">",
+      "css": ".ds-search{font:400 12px system-ui;height:28px;width:188px;background:#FFFFFF;color:#1D1D1F;border:1px solid #DEDEE2}.ds-search::placeholder{color:#5C5C61}.ds-search:hover{border-color:#5C5C61}.ds-search:focus-visible{outline:2px solid #303034;outline-offset:2px}@media(prefers-color-scheme:dark){.ds-search{color:#F5F5F7;background:#242426;border-color:#3C3C40}.ds-search::placeholder{color:#B7B7BD}.ds-search:focus-visible{outline-color:#E4E4E8}}"
+    },
+    {
+      "name": "Item navigation",
+      "kind": "nav",
+      "refersTo": "item-row",
+      "description": "49pt native item row with icon, name and kind/operation caption. AppKit owns selection colors.",
+      "html": "<nav class=\"ds-items\" aria-label=\"工作台数据列表\"><button class=\"ds-item\" aria-current=\"page\"><strong>项目数据.csv</strong><span>表格</span></button></nav>",
+      "css": ".ds-items{width:204px;background:#ECECEE}.ds-item{display:flex;flex-direction:column;justify-content:center;gap:3px;width:100%;height:49px;padding:4px 10px;border:0;text-align:left;color:#1D1D1F;background:transparent}.ds-item strong{font:500 12px system-ui}.ds-item span{font:400 10px system-ui;color:#5C5C61}.ds-item:hover{background:#E2E2E6}.ds-item:focus-visible{outline:2px solid #303034;outline-offset:-2px}"
+    },
+    {
+      "name": "Content card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Opaque 14pt card; 1pt border at rest, 2pt when selected; title drag area and lower-right resize grip. Browser sample does not implement native drag or preview.",
+      "html": "<article class=\"ds-card\" tabindex=\"0\"><header>项目数据 · 清理空格 <span>文本</span></header><pre>名称,状态\nJot,已整理</pre><footer>来自处理 · 清理空格<span aria-label=\"调整尺寸\">◿</span></footer></article>",
+      "css": ".ds-card{width:360px;height:320px;border:1px solid #DEDEE2;border-radius:14px;background:#FFFFFF;color:#1D1D1F;overflow:hidden;display:flex;flex-direction:column}.ds-card header{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font:600 13px system-ui;cursor:grab}.ds-card header span{font:500 10px system-ui;color:#5C5C61}.ds-card pre{flex:1;margin:0 12px;font:400 13px system-ui;white-space:pre-wrap}.ds-card footer{height:34px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;font:400 10px system-ui;color:#5C5C61}.ds-card footer span{cursor:crosshair}.ds-card:focus-visible{outline:none;border:2px solid #303034}.ds-card header:active{cursor:grabbing}@media(prefers-color-scheme:dark){.ds-card{background:#242426;color:#F5F5F7;border-color:#3C3C40}.ds-card header span,.ds-card footer{color:#B7B7BD}.ds-card:focus-visible{border-color:#E4E4E8}}"
+    },
+    {
+      "name": "Writing surface",
+      "kind": "input",
+      "refersTo": "editor",
+      "description": "Native NSTextView in a separate detail window, using system undo and find. No rounded editor container.",
+      "html": "<textarea class=\"ds-editor\" aria-label=\"文本编辑区\">在这里编辑卡片内容。</textarea>",
+      "css": ".ds-editor{font:400 15px system-ui;padding:14px 16px;width:360px;height:180px;background:#FFFFFF;color:#1D1D1F;border:0;caret-color:#303034;resize:both}.ds-editor::selection{background:#E2E2E6;color:#1D1D1F}.ds-editor:hover{cursor:text}.ds-editor:focus-visible{outline:2px solid #303034;outline-offset:2px}@media(prefers-color-scheme:dark){.ds-editor{background:#242426;color:#F5F5F7;caret-color:#E4E4E8}.ds-editor::selection{background:#36363A;color:#F5F5F7}.ds-editor:focus-visible{outline-color:#E4E4E8}}"
+    },
+    {
+      "name": "Glass toolbar",
+      "kind": "custom",
+      "refersTo": "glass-toolbar",
+      "description": "44pt native contextual glass row, 18pt radius, 16pt leading/12pt trailing inset. Geometry reference only.",
+      "html": "<div class=\"ds-toolbar\"><span>文本 · 项目记录</span><span class=\"ds-space\"></span><button>专注查看</button><button>卡片工具</button></div>",
+      "css": ".ds-toolbar{display:flex;align-items:center;gap:7px;height:44px;padding:0 12px 0 16px;border-radius:18px;background:#F3F3F5;color:#5C5C61;font:400 12px system-ui}.ds-toolbar button{font:400 12px system-ui;height:34px;background:#FAFAFC;border:1px solid #C9C9D1;border-radius:10px;padding:0 13px;color:#1D1D1F;cursor:pointer;transition:background .14s,transform .14s}.ds-space{flex:1}.ds-toolbar button:hover{background:#E6E6ED}.ds-toolbar button:focus-visible{outline:2px solid #303034;outline-offset:2px}.ds-toolbar button:active{background:#D3D3DC;transform:scale(.96)}@media(prefers-color-scheme:dark){.ds-toolbar{background:#29292C;color:#B7B7BD}.ds-toolbar button:hover{color:#E4E4E8}.ds-toolbar button:focus-visible{outline-color:#E4E4E8}}@media(prefers-color-scheme:dark){.ds-toolbar button{background:#323237;color:#F5F5F7;border-color:#62626D}.ds-toolbar button:hover{background:#45454D}.ds-toolbar button:active{background:#55555E}}@media(prefers-reduced-motion:reduce){.ds-toolbar button:active{transform:none}}"
+    },
+    {
+      "name": "Type filter",
+      "kind": "select",
+      "refersTo": "type-filter",
+      "description": "Native NSPopUpButton, 34pt high with 10pt radius; type icon and disclosure chevron. Shares button hover/press/focus/disabled and reduced-motion feedback. Native menu supplies keyboard selection and Escape dismissal.",
+      "html": "<select class=\"ds-type-filter\" aria-label=\"筛选数据类型\"><option>全部类型</option><option>文本</option><option>JSON</option><option>表格</option><option>PDF</option><option>图片</option><option>文件</option></select>",
+      "css": ".ds-type-filter{height:34px;min-width:188px;padding:0 12px;border:1px solid #C9C9D1;border-radius:10px;background:#FAFAFC;color:#1D1D1F;font:400 12px system-ui;cursor:pointer;transition:background .14s,border-color .14s}.ds-type-filter:hover{background:#E6E6ED;border-color:#9A9AA5}.ds-type-filter:focus-visible{outline:2px solid Highlight}.ds-type-filter:disabled{opacity:.4;cursor:default}@media(prefers-color-scheme:dark){.ds-type-filter{background:#323237;color:#F5F5F7;border-color:#62626D}.ds-type-filter:hover{background:#45454D;border-color:#858591}}@media(prefers-reduced-motion:reduce){.ds-type-filter{transition-duration:.08s}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "编辑工作台",
+    "overview": "Jot gives text, data and files a spacious native Mac workbench. The confirmed gray-white direction appears in an adaptive graphite identity, a translucent sidebar, opaque content cards and native glass controls. The Jot name and user-selected dot-and-lowercase-j silhouette remain the identity anchors.\n\nThe free canvas makes sources and results visible together. Compact navigation and contextual tools leave room for movable cards; separate detail windows give editing and previewing focused space. System typography, AppKit window chrome and native text interactions determine the feel.",
+    "keyCharacteristics": [
+      "Neutral gray-white surfaces with adaptive charcoal counterparts.",
+      "Opaque cards on a scrollable, magnifiable canvas.",
+      "Native glass navigation and contextual controls.",
+      "Visible card selection, source context and local-save status.",
+      "User-selected dot-and-lowercase-j identity, drawn natively."
+    ],
+    "rules": [
+      {
+        "name": "The Appearance Pair Rule",
+        "body": "Apply light and dark values by semantic role through native appearance resolution; do not freeze the app to a single screenshot's palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The Native Material Rule",
+        "body": "Let AppKit own glass composition, highlights, shadows, focus, hover and pressed rendering. Documentation snippets illustrate geometry and palette only; they do not reproduce native materials.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** preserve the Jot name and user-selected dot-and-lowercase-j silhouette.",
+      "**Do** keep gray-white surfaces and adaptive charcoal counterparts.",
+      "**Do** reserve glass for navigation and controls while keeping content cards opaque.",
+      "**Do** keep drag handles, resize grips and selection outlines visible.",
+      "**Do** use native windows and controls for detail editing, preview and system actions.",
+      "**Do** show processing state, result provenance and save failures in clear text."
+    ],
+    "donts": [
+      "**Don't** restore the superseded sage palette or add stationery textures.",
+      "**Don't** replace the native Mac implementation with a web shell or mobile layout.",
+      "**Don't** invent exact glass colors, decorative card shadows or production CSS blur.",
+      "**Don't** describe read-only previews as editable grids or claim direct editing of arbitrary files.",
+      "**Don't** treat documentation panel previews as native rendering or older-OS validation."
+    ]
+  }
+}

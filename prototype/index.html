@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#edf1e9">
+  <meta name="description" content="Jot，一个给临时文字落脚的轻量编辑器。粘贴、修改、自动保存。">
+  <title>Jot · 轻量文本编辑器</title>
+  <link rel="icon" href="../Resources/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#editor">跳到编辑区</a>
+  <div class="app-shell">
+    <button class="drawer-backdrop" id="drawer-backdrop" aria-label="关闭草稿列表" hidden></button>
+    <aside class="sidebar" id="sidebar" aria-label="草稿列表">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M10 23V10h12M10 16h9M17 24l8-8M21 25h5"/></svg></span><div><h1>Jot<span class="brand-dot">.</span></h1><p>给文字一个落脚处</p></div><button id="close-sidebar" class="icon-button mobile-only" aria-label="关闭草稿列表" data-icon="close"></button></div>
+      <button class="button primary new-draft" id="new-draft"><span data-icon="plus"></span>新建草稿<kbd id="new-shortcut">⌘ ⇧ N</kbd></button>
+      <label class="draft-search"><span data-icon="search"></span><input id="draft-search" type="search" placeholder="搜索草稿" aria-label="搜索草稿"></label>
+      <div class="list-heading"><h2>我的草稿</h2><span id="draft-count">1</span></div>
+      <nav id="draft-list" class="draft-list" aria-label="选择草稿"></nav>
+      <div class="sidebar-bottom"><button id="import-file" class="button quiet"><span data-icon="upload"></span>导入文本文件</button><input id="file-input" type="file" accept=".txt,.md,.json,.csv,.log,.xml,.yaml,.yml,.js,.css,.html,text/*,application/json" hidden><div class="local-note"><span data-icon="shield"></span><span>保存在此浏览器，内容不上传</span></div><div class="sidebar-foot"><span>简单一点，专心写。</span><button id="theme-toggle" class="icon-button" aria-label="切换深色模式" title="切换深色模式" data-icon="moon"></button></div></div>
+    </aside>
+    <main class="workspace" id="workspace">
+      <header class="document-header">
+        <button id="open-sidebar" class="icon-button mobile-only" aria-label="打开草稿列表" aria-expanded="false" aria-controls="sidebar" data-icon="panel"></button>
+        <div class="document-identity"><label for="document-title" class="sr-only">草稿名称</label><input id="document-title" placeholder="未命名草稿" maxlength="120" aria-label="草稿名称"><div class="save-state" id="save-state" role="status"><span class="save-seal" data-icon="check"></span><span id="save-label">已保存到本机</span></div></div>
+        <div class="header-actions"><button id="export-file" class="button quiet" title="导出为文本文件"><span data-icon="download"></span><span class="action-label">导出</span></button><button id="copy-all" class="button primary"><span data-icon="copy"></span><span>复制全文</span></button></div>
+      </header>
+      <div class="toolbar" role="toolbar" aria-label="编辑工具">
+        <div class="toolbar-group"><span class="type-mark" aria-hidden="true">Aa</span><label for="text-mode" class="sr-only">编辑模式</label><select id="text-mode"><option value="text">纯文本</option><option value="code">代码 / 数据</option></select><span class="toolbar-divider"></span><button id="font-smaller" class="icon-button" aria-label="缩小编辑器字号" title="缩小字号" data-icon="minus"></button><span id="font-size" class="font-size">16</span><button id="font-larger" class="icon-button" aria-label="放大编辑器字号" title="放大字号" data-icon="plus"></button></div>
+        <div class="toolbar-group tools-right"><button id="toggle-wrap" class="button quiet tool" aria-pressed="true"><span data-icon="wrap"></span><span>自动换行</span></button><button id="find-toggle" class="button quiet tool" aria-expanded="false"><span data-icon="search"></span><span>查找替换</span></button><div class="menu-host"><button id="tools-toggle" class="button quiet tool" aria-expanded="false" aria-controls="text-tools"><span data-icon="sliders"></span><span>整理文本</span><span data-icon="chevron"></span></button><div id="text-tools" class="tools-menu" hidden><button data-transform="json">格式化 JSON<span>缩进 2 格</span></button><button data-transform="trim">去除行首尾空格</button><button data-transform="empty">移除空白行</button><button data-transform="dedupe">去除重复行<span>保留第一次出现</span></button></div></div></div>
+      </div>
+      <section class="find-bar" id="find-bar" aria-label="查找替换" hidden><div class="find-row"><label class="sr-only" for="find-input">查找文本</label><input id="find-input" placeholder="查找文本"><span id="match-count" class="match-count" aria-live="polite">0 处</span><button id="find-prev" class="icon-button" aria-label="上一处" data-icon="up"></button><button id="find-next" class="icon-button" aria-label="下一处" data-icon="down"></button><button id="find-close" class="icon-button" aria-label="关闭查找替换" data-icon="close"></button></div><div class="find-row"><label class="sr-only" for="replace-input">替换为</label><input id="replace-input" placeholder="替换为"><button id="replace-one" class="button quiet">替换</button><button id="replace-all" class="button quiet">全部替换</button></div></section>
+      <div class="editor-surface" id="editor-surface"><pre class="line-numbers" id="line-numbers" aria-hidden="true">1</pre><label class="sr-only" for="editor">文本编辑区</label><textarea id="editor" spellcheck="false" aria-label="文本编辑区" autocapitalize="off" autocomplete="off" placeholder="" wrap="soft"></textarea><div class="empty-editor" id="empty-editor"><div class="empty-mark" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M17 45V14h25M17 25h18M17 34h14M35 46l15-15 5 5-15 15-8 3zM47 34l5 5"/></svg></div><h2>粘贴到这里，接着写。</h2><p>一段文字，一份数据，或一个还没成形的想法。<br>不用想放在哪里，先放在Jot。</p><button id="paste-clipboard" class="button paste-button"><span data-icon="clipboard"></span>粘贴剪贴板内容</button><span class="paste-hint">或点击空白处，按 <kbd id="paste-shortcut">⌘ V</kbd></span></div></div>
+      <footer class="status-bar"><div><span class="status-dot"></span><span id="character-count">0 字符</span><span class="status-separator">·</span><span id="line-count">1 行</span><span id="selection-count" hidden></span></div><div><span id="cursor-position">行 1，列 1</span><span class="status-separator">·</span><span>UTF-8</span></div></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" hidden><span id="toast-message"></span><button id="toast-undo" hidden>撤销</button><button id="toast-close" aria-label="关闭提示" data-icon="close"></button></div>
+  <dialog id="delete-dialog"><form method="dialog"><h2>删除这份草稿？</h2><p id="delete-description">删除后可以通过提示条撤销。</p><div class="dialog-actions"><button value="cancel" class="button quiet">取消</button><button value="delete" class="button danger">删除草稿</button></div></form></dialog>
+</body>
+</html>
