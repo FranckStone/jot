@@ -14,6 +14,11 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
     private var filter: ItemKind?
     private var dirty = false
     private var saveTask: DispatchWorkItem?
+    // Encoding and writing large workbenches stays off the main thread; the store is confined to this queue.
+    private let saveQueue = DispatchQueue(label: "Jot.WorkbenchSave", qos: .utility)
+    private var savesInFlight = 0
+    private var saveFailed = false
+    private var saveGeneration = 0
     private var processing = Set<UUID>()
     private let history = UndoManager()
     private let canvas = WorkbenchCanvas(frame: NSRect(x: 0, y: 0, width: 2800, height: 1800))
@@ -347,7 +352,7 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
         }
         controller.onClose = { [weak self] in
             guard let self else { return }; self.details.removeValue(forKey: id)
-            self.refreshCard(id); self.updateList(); _ = self.flushSave()
+            self.refreshCard(id); self.updateList(); self.saveInBackground()
         }
         details[id] = controller; controller.showWindow(nil); controller.window?.makeKeyAndOrderFront(nil)
     }
@@ -531,15 +536,43 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
     private func scheduleSave() {
         dirty = true; saveTask?.cancel()
         if processing.isEmpty { status.stringValue = "正在保存…" }
-        let task = DispatchWorkItem { [weak self] in _ = self?.flushSave() }
+        let task = DispatchWorkItem { [weak self] in self?.saveInBackground() }
         saveTask = task; DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: task)
     }
+    private func saveInBackground() {
+        saveTask?.cancel()
+        guard dirty else { return }
+        let snapshot = board, store = store
+        dirty = false; savesInFlight += 1; saveGeneration += 1
+        let generation = saveGeneration
+        saveQueue.async { [weak self] in
+            let result = Result { try store.save(snapshot) }
+            DispatchQueue.main.async { self?.finishSave(result, generation: generation) }
+        }
+    }
+    private func finishSave(_ result: Result<Void, Error>, generation: Int) {
+        savesInFlight -= 1
+        // A newer save, or a synchronous flush, supersedes this outcome.
+        guard generation == saveGeneration else { return }
+        switch result {
+        case .success: saveFailed = false; showSaved()
+        case .failure: saveFailed = true; dirty = true; showSaveFailure()
+        }
+    }
+    /// Blocks until the current board is on disk; used when closing or quitting.
     @discardableResult func flushSave() -> Bool {
         saveTask?.cancel()
-        guard dirty else { return true }
-        do { try store.save(board); dirty = false; status.textColor = Palette.muted; if processing.isEmpty { status.stringValue = "已保存到本机" }; return true }
-        catch { status.stringValue = "保存失败，请导出内容"; status.textColor = .systemRed; return false }
+        guard dirty || savesInFlight > 0 || saveFailed else { return true }
+        let snapshot = board, store = store
+        saveGeneration += 1
+        let result = saveQueue.sync { Result { try store.save(snapshot) } }
+        switch result {
+        case .success: dirty = false; saveFailed = false; showSaved(); return true
+        case .failure: dirty = true; saveFailed = true; showSaveFailure(); return false
+        }
     }
+    private func showSaved() { status.textColor = Palette.muted; if processing.isEmpty && !dirty { status.stringValue = "已保存到本机" } }
+    private func showSaveFailure() { status.stringValue = "保存失败，请导出内容"; status.textColor = .systemRed }
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         if flushSave() { return true }
         showError("工作台尚未保存，请先导出需要保留的内容。"); return false

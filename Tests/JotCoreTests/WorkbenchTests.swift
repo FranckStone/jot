@@ -67,6 +67,37 @@ final class WorkbenchTests: XCTestCase {
         XCTAssertEqual(try Data(contentsOf: XCTUnwrap(preserved)), broken)
     }
 
+    func testBackupHoldsPreviousSaveAndNeverACorruptFile() throws {
+        let store = WorkbenchStore(directory: directory)
+        var board = Workbench(); board.items = [BoardItem(text: "first")]
+        try store.save(board)
+        board.items[0].text = "second"; try store.save(board)
+        let backup = try JSONDecoder().decode(Workbench.self, from: Data(contentsOf: store.backupURL))
+        XCTAssertEqual(backup.items.first?.text, "first")
+        let permissions = try FileManager.default.attributesOfItem(atPath: store.backupURL.path)[.posixPermissions] as? NSNumber
+        XCTAssertEqual(permissions?.intValue, 0o600)
+        // Replaced behind the store's back, the file must be revalidated before it becomes the backup.
+        try Data("corrupt-but-longer-than-before".utf8).write(to: store.fileURL)
+        board.items[0].text = "third"; try store.save(board)
+        let kept = try JSONDecoder().decode(Workbench.self, from: Data(contentsOf: store.backupURL))
+        XCTAssertEqual(kept.items.first?.text, "first")
+        XCTAssertEqual(store.load().workbench.items.first?.text, "third")
+    }
+
+    func testSavesFromBackgroundQueueLeaveLatestBoard() throws {
+        let store = WorkbenchStore(directory: directory)
+        _ = store.load()
+        let queue = DispatchQueue(label: "test.save")
+        var board = Workbench(); board.items = [BoardItem(text: "")]
+        for index in 0..<20 {
+            board.items[0].text = String(repeating: "数据", count: 1000) + "\(index)"
+            let snapshot = board
+            queue.async { try? store.save(snapshot) }
+        }
+        queue.sync {}
+        XCTAssertEqual(store.load().workbench.items.map(\.text), board.items.map(\.text))
+    }
+
     func testUnsupportedVersionDoesNotFallBackAndOverwrite() throws {
         let store = WorkbenchStore(directory: directory)
         try store.save(Workbench()); try store.save(Workbench())

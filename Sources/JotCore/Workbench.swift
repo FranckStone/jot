@@ -90,23 +90,30 @@ public struct WorkbenchLoadResult {
 }
 
 /// A separate store leaves the original drafts intact during migration.
+/// After `load()`, call `save` from one serial queue at a time.
 public final class WorkbenchStore {
     public let directory: URL
     public var fileURL: URL { directory.appendingPathComponent("workbench.json") }
     public var backupURL: URL { directory.appendingPathComponent("workbench.backup.json") }
     public var attachmentsURL: URL { directory.appendingPathComponent("attachments", isDirectory: true) }
     private var canOverwrite = true
+    // Size and date of the file this store last read or wrote, so saves can skip re-validating it.
+    private var validFileStamp: [FileAttributeKey: AnyHashable]?
     public init(directory: URL) { self.directory = directory }
 
     public func load() -> WorkbenchLoadResult {
         let files = FileManager.default
+        validFileStamp = nil
         if !files.fileExists(atPath: fileURL.path), !files.fileExists(atPath: backupURL.path) {
             let legacy = DraftStore(directory: directory).load()
             canOverwrite = legacy.canSave
             return .init(workbench: Workbench(legacy: legacy.workspace), warning: legacy.warning, canSave: legacy.canSave)
         }
         do {
-            return .init(workbench: try decode(Data(contentsOf: fileURL)), warning: nil, canSave: true)
+            let stamp = fileStamp()
+            let workbench = try decode(Data(contentsOf: fileURL))
+            validFileStamp = stamp
+            return .init(workbench: workbench, warning: nil, canSave: true)
         } catch {
             if case StoreError.unsupportedVersion = error {
                 canOverwrite = false
@@ -134,12 +141,21 @@ public final class WorkbenchStore {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         let data = try encoder.encode(checked)
-        if let previous = try? Data(contentsOf: fileURL), (try? decode(previous)) != nil {
-            try previous.write(to: backupURL, options: .atomic)
-            try files.setAttributes([.posixPermissions: 0o600], ofItemAtPath: backupURL.path)
+        // Preserve the previous valid snapshot, never a corrupt one. Renaming avoids rereading large files.
+        if files.fileExists(atPath: fileURL.path),
+           (validFileStamp != nil && fileStamp() == validFileStamp) || (try? decode(Data(contentsOf: fileURL))) != nil {
+            if files.fileExists(atPath: backupURL.path) { try files.removeItem(at: backupURL) }
+            try files.moveItem(at: fileURL, to: backupURL)
         }
+        validFileStamp = nil
         try data.write(to: fileURL, options: .atomic)
         try files.setAttributes([.posixPermissions: 0o600], ofItemAtPath: fileURL.path)
+        validFileStamp = fileStamp()
+    }
+    private func fileStamp() -> [FileAttributeKey: AnyHashable]? {
+        guard let attributes = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
+              let size = attributes[.size] as? NSNumber, let modified = attributes[.modificationDate] as? Date else { return nil }
+        return [.size: size, .modificationDate: modified]
     }
 
     public func copyAttachment(from source: URL) throws -> String {
