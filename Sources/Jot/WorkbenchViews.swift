@@ -277,6 +277,31 @@ private final class DetailTextView: NSTextView {
     }
 }
 
+/// Text display preferences shared by every focus window.
+struct EditorSettings {
+    var fontSize: CGFloat
+    var codeMode: Bool
+    var wraps: Bool
+
+    static func load() -> EditorSettings {
+        let defaults = UserDefaults.standard
+        let size = defaults.object(forKey: "Jot.EditorFontSize") as? Double ?? 15
+        return EditorSettings(fontSize: min(28, max(12, size.isFinite ? size : 15)),
+                              codeMode: defaults.bool(forKey: "Jot.EditorCodeMode"),
+                              wraps: defaults.object(forKey: "Jot.EditorWraps") as? Bool ?? true)
+    }
+    func save() {
+        let defaults = UserDefaults.standard
+        defaults.set(Double(fontSize), forKey: "Jot.EditorFontSize")
+        defaults.set(codeMode, forKey: "Jot.EditorCodeMode")
+        defaults.set(wraps, forKey: "Jot.EditorWraps")
+    }
+    /// JSON and tables always use monospace, one size smaller to match the proportional body text.
+    func font(for kind: ItemKind) -> NSFont {
+        codeMode || kind != .text ? .monospacedSystemFont(ofSize: fontSize - 1, weight: .regular) : .systemFont(ofSize: fontSize)
+    }
+}
+
 final class ItemDetailController: NSWindowController, NSTextViewDelegate, NSTextFieldDelegate {
     let itemID: UUID
     var onChange: ((String, String) -> Void)?
@@ -287,10 +312,10 @@ final class ItemDetailController: NSWindowController, NSTextViewDelegate, NSText
     private let content = NSView()
     private var mode: NSSegmentedControl?
     private let initial: BoardItem
-    var textView: NSTextView? { initial.kind.isText ? editor : nil }
+    private var settings: EditorSettings
 
-    init(item: BoardItem, url: URL?) {
-        itemID = item.id; initial = item
+    init(item: BoardItem, url: URL?, settings: EditorSettings) {
+        itemID = item.id; initial = item; self.settings = settings
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 900, height: 680), styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: false)
         window.title = item.displayTitle; window.minSize = NSSize(width: 560, height: 400)
         configureWindowChrome(window, identifier: "Jot.DetailChrome")
@@ -313,7 +338,8 @@ final class ItemDetailController: NSWindowController, NSTextViewDelegate, NSText
         ])
         if item.kind.isText {
             editor.string = item.text; editor.isRichText = false; editor.allowsUndo = true
-            editor.font = item.kind == .text ? .systemFont(ofSize: 15) : .monospacedSystemFont(ofSize: 14, weight: .regular)
+            editor.font = settings.font(for: item.kind)
+            editor.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
             editor.textColor = Palette.ink; editor.backgroundColor = Palette.paper
             editor.isAutomaticQuoteSubstitutionEnabled = false; editor.isAutomaticDashSubstitutionEnabled = false
             editor.textContainerInset = NSSize(width: 16, height: 14)
@@ -360,18 +386,29 @@ final class ItemDetailController: NSWindowController, NSTextViewDelegate, NSText
         scroll.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
         scroll.setContentHuggingPriority(.defaultLow, for: .vertical)
         install(stack); stack.layoutSubtreeIfNeeded(); editor.frame.size.width = scroll.contentSize.width
-        window?.makeFirstResponder(editor)
+        apply(settings); window?.makeFirstResponder(editor)
     }
-    func revealEditor() -> NSTextView? {
-        guard initial.kind.isText else { return nil }
-        mode?.selectedSegment = 1; showEditor(); return editor
+    func apply(_ settings: EditorSettings) {
+        self.settings = settings
+        guard initial.kind.isText else { return }
+        editor.font = settings.font(for: initial.kind)
+        let width = editor.enclosingScrollView?.contentSize.width ?? editor.frame.width
+        editor.isHorizontallyResizable = !settings.wraps; editor.autoresizingMask = settings.wraps ? [.width] : []
+        editor.textContainer?.widthTracksTextView = settings.wraps
+        editor.textContainer?.containerSize = NSSize(width: settings.wraps ? width : CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        if settings.wraps { editor.setFrameSize(NSSize(width: width, height: editor.frame.height)) }
+        editor.enclosingScrollView?.hasHorizontalScroller = !settings.wraps
+    }
+    private func revealEditor() {
+        guard initial.kind.isText else { return }
+        mode?.selectedSegment = 1; showEditor()
     }
     @objc private func showFindBar() {
-        _ = revealEditor(); findBar.isHidden = false; content.layoutSubtreeIfNeeded(); findBar.focusQuery()
+        revealEditor(); findBar.isHidden = false; content.layoutSubtreeIfNeeded(); findBar.focusQuery()
     }
     func performFind(_ action: NSTextFinder.Action) {
         if action == .showFindInterface { showFindBar(); return }
-        _ = revealEditor()
+        revealEditor()
         if findBar.isHidden { showFindBar() }
         findBar.navigate(backwards: action == .previousMatch)
     }

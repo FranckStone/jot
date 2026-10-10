@@ -3,6 +3,8 @@ import JotCore
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     var controller: WorkbenchWindowController?
+    // Cold launches deliver files before the workbench exists.
+    private var pendingFiles: [URL] = []
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Read the bundled file directly so Dock does not keep an older Launch Services icon.
@@ -15,6 +17,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         installMenu()
         controller?.showWindow(nil)
         NSApp.activate(ignoringOtherApps: true)
+        pendingFiles.forEach { controller?.importURL($0) }
+        pendingFiles.removeAll()
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -30,7 +34,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
 
     func application(_ sender: NSApplication, openFiles filenames: [String]) {
-        for path in filenames { controller?.importURL(URL(fileURLWithPath: path)) }
+        let urls = filenames.map { URL(fileURLWithPath: $0) }
+        if let controller { urls.forEach(controller.importURL) } else { pendingFiles += urls }
         sender.reply(toOpenOrPrint: .success)
     }
 
@@ -89,8 +94,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let view = NSMenu(title: "显示")
         add("收起侧栏", #selector(WorkbenchWindowController.toggleSidebar(_:)), key: "s", modifiers: [.control, .command], to: view)
         view.addItem(.separator())
-        add("切换自动换行", #selector(WorkbenchWindowController.toggleWrap(_:)), to: view)
-        add("切换代码字体", #selector(WorkbenchWindowController.toggleCodeMode(_:)), to: view)
+        add("自动换行", #selector(WorkbenchWindowController.toggleWrap(_:)), to: view)
+        add("代码字体", #selector(WorkbenchWindowController.toggleCodeMode(_:)), to: view)
         add("放大字号", #selector(WorkbenchWindowController.increaseFont(_:)), key: "+", to: view)
         add("缩小字号", #selector(WorkbenchWindowController.decreaseFont(_:)), key: "-", to: view)
         attach(view, to: bar)

@@ -356,10 +356,6 @@ func controlCapsule(_ control: NSButton, primary: Bool = false) -> NSView {
     return capsule
 }
 
-final class RuleView: NSView {
-    override func draw(_ dirtyRect: NSRect) { Palette.line.setFill(); bounds.fill() }
-}
-
 /// The dot-and-j monogram in Resources/icon.svg, drawn natively at any size.
 final class LogoView: NSView {
     var badge: Bool
@@ -389,77 +385,6 @@ final class LogoView: NSView {
         stroke.stroke()
     }
     override func viewDidChangeEffectiveAppearance() { super.viewDidChangeEffectiveAppearance(); needsDisplay = true }
-}
-
-final class DraftRowView: NSTableRowView {
-    override var isEmphasized: Bool { get { false } set {} }
-    override func drawSelection(in dirtyRect: NSRect) {
-        Palette.selected.setFill()
-        NSBezierPath(roundedRect: bounds.insetBy(dx: 3, dy: 3), xRadius: 12, yRadius: 12).fill()
-    }
-}
-
-final class DraftCell: NSTableCellView {
-    let nameLabel = label("", size: 13, weight: .medium)
-    let previewLabel = label("", size: 11, color: Palette.muted)
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-        let icon = NSImageView(image: symbol("doc.text", size: 14) ?? NSImage())
-        icon.contentTintColor = Palette.muted
-        let labels = NSStackView(views: [nameLabel, previewLabel])
-        labels.orientation = .vertical
-        labels.alignment = .leading
-        labels.spacing = 7
-        [icon, labels].forEach { $0.translatesAutoresizingMaskIntoConstraints = false; addSubview($0) }
-        NSLayoutConstraint.activate([
-            icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            icon.topAnchor.constraint(equalTo: topAnchor, constant: 17),
-            icon.widthAnchor.constraint(equalToConstant: 16), icon.heightAnchor.constraint(equalToConstant: 16),
-            labels.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 9),
-            labels.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -14),
-            labels.centerYAnchor.constraint(equalTo: centerYAnchor),
-            nameLabel.widthAnchor.constraint(equalTo: labels.widthAnchor),
-            previewLabel.widthAnchor.constraint(equalTo: labels.widthAnchor)
-        ])
-    }
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-}
-
-final class EmptyStateView: NSView {
-    let pasteButton: NSButton
-    init(target: AnyObject, action: Selector) {
-        pasteButton = button("粘贴剪贴板内容", symbol: "doc.on.clipboard", target: target, action: action)
-        super.init(frame: .zero)
-        let mark = LogoView(badge: false)
-        let heading = label("粘贴到这里，接着写。", size: 26, weight: .medium)
-        let description = label("一段文字，一份数据，或一个还没成形的想法。\n不用想放在哪里，先放在 Jot。", size: 13, color: Palette.muted)
-        description.maximumNumberOfLines = 2
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.lineSpacing = 8
-        description.attributedStringValue = NSAttributedString(string: description.stringValue, attributes: [.font: description.font!, .foregroundColor: Palette.muted, .paragraphStyle: paragraph])
-        let hint = label("或点击空白处，按 ⌘ V", size: 11, color: Palette.muted)
-        let pasteCapsule = controlCapsule(pasteButton)
-        let stack = NSStackView(views: [mark, heading, description, pasteCapsule, hint])
-        stack.orientation = .vertical
-        stack.alignment = .leading
-        stack.spacing = 18
-        stack.setCustomSpacing(27, after: mark)
-        stack.setCustomSpacing(26, after: description)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        mark.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(stack)
-        NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: leadingAnchor), stack.topAnchor.constraint(equalTo: topAnchor),
-            stack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            mark.widthAnchor.constraint(equalToConstant: 54), mark.heightAnchor.constraint(equalToConstant: 54),
-            pasteCapsule.widthAnchor.constraint(equalToConstant: 186)
-        ])
-    }
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    override func hitTest(_ point: NSPoint) -> NSView? {
-        let buttonPoint = pasteButton.convert(point, from: self)
-        return pasteButton.bounds.contains(buttonPoint) ? pasteButton : nil
-    }
 }
 
 /// The rounded input surface owns focus chrome; the field editor keeps native text behavior.

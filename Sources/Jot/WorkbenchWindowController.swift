@@ -30,9 +30,7 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
     private var rebuildingList = false
     private var loadingWarning: String?
     private var eventMonitor: Any?
-    private var fontSize: CGFloat = 15
-    private var codeMode = false
-    private var wraps = true
+    private var editorSettings = EditorSettings.load()
     private let sidebar = NSVisualEffectView()
     private var sidebarLeading: NSLayoutConstraint!
     private var sidebarToggle: NSButton!
@@ -339,7 +337,7 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
     private func openDetail(_ id: UUID) {
         guard let item = board.items.first(where: { $0.id == id }) else { return }
         if let controller = details[id] { controller.showWindow(nil); controller.window?.makeKeyAndOrderFront(nil); return }
-        let controller = ItemDetailController(item: item, url: store.attachmentURL(for: item))
+        let controller = ItemDetailController(item: item, url: store.attachmentURL(for: item), settings: editorSettings)
         controller.onChange = { [weak self] title, text in
             guard let self, let index = self.board.items.firstIndex(where: { $0.id == id }) else { return }
             self.board.items[index].title = title
@@ -546,10 +544,6 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
         if flushSave() { return true }
         showError("工作台尚未保存，请先导出需要保留的内容。"); return false
     }
-    private func activeTextView() -> NSTextView? {
-        guard let item = selectedItem, item.kind.isText else { return nil }
-        openDetail(item.id); return details[item.id]?.revealEditor()
-    }
     @objc func showFind(_ sender: Any?) { find(.showFindInterface) }
     @objc func findNext(_ sender: Any?) { find(.nextMatch) }
     @objc func findPrevious(_ sender: Any?) { find(.previousMatch) }
@@ -557,20 +551,27 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
         guard let item = selectedItem, item.kind.isText else { return }
         openDetail(item.id); details[item.id]?.performFind(action)
     }
-    @objc func toggleWrap(_ sender: Any?) {
-        wraps.toggle(); guard let text = activeTextView() else { return }
-        text.isHorizontallyResizable = !wraps; text.textContainer?.widthTracksTextView = wraps
-        text.textContainer?.containerSize = NSSize(width: wraps ? (text.enclosingScrollView?.contentSize.width ?? 800) : CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+    @objc func toggleWrap(_ sender: Any?) { updateEditorSettings { $0.wraps.toggle() } }
+    @objc func toggleCodeMode(_ sender: Any?) { updateEditorSettings { $0.codeMode.toggle() } }
+    @objc func increaseFont(_ sender: Any?) { updateEditorSettings { $0.fontSize = min(28, $0.fontSize + 1) } }
+    @objc func decreaseFont(_ sender: Any?) { updateEditorSettings { $0.fontSize = max(12, $0.fontSize - 1) } }
+    private func updateEditorSettings(_ change: (inout EditorSettings) -> Void) {
+        change(&editorSettings); editorSettings.save()
+        details.values.forEach { $0.apply(editorSettings) }
     }
-    @objc func toggleCodeMode(_ sender: Any?) { codeMode.toggle(); activeTextView()?.font = codeMode ? .monospacedSystemFont(ofSize: fontSize, weight: .regular) : .systemFont(ofSize: fontSize) }
-    @objc func increaseFont(_ sender: Any?) { fontSize = min(28, fontSize + 1); activeTextView()?.font = codeMode ? .monospacedSystemFont(ofSize: fontSize, weight: .regular) : .systemFont(ofSize: fontSize) }
-    @objc func decreaseFont(_ sender: Any?) { fontSize = max(12, fontSize - 1); activeTextView()?.font = codeMode ? .monospacedSystemFont(ofSize: fontSize, weight: .regular) : .systemFont(ofSize: fontSize) }
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         if menuItem.action == #selector(toggleSidebar(_:)) {
             menuItem.title = sidebarCollapsed ? "展开侧栏" : "收起侧栏"
             return true
         }
-        let textActions: [Selector] = [#selector(formatJSON(_:)), #selector(trimLines(_:)), #selector(removeBlankLines(_:)), #selector(uniqueLines(_:)), #selector(copyAll(_:)), #selector(showFind(_:)), #selector(findNext(_:)), #selector(findPrevious(_:)), #selector(toggleWrap(_:)), #selector(toggleCodeMode(_:)), #selector(increaseFont(_:)), #selector(decreaseFont(_:))]
+        switch menuItem.action {
+        case #selector(toggleWrap(_:)): menuItem.state = editorSettings.wraps ? .on : .off; return true
+        case #selector(toggleCodeMode(_:)): menuItem.state = editorSettings.codeMode ? .on : .off; return true
+        case #selector(increaseFont(_:)): return editorSettings.fontSize < 28
+        case #selector(decreaseFont(_:)): return editorSettings.fontSize > 12
+        default: break
+        }
+        let textActions: [Selector] = [#selector(formatJSON(_:)), #selector(trimLines(_:)), #selector(removeBlankLines(_:)), #selector(uniqueLines(_:)), #selector(copyAll(_:)), #selector(showFind(_:)), #selector(findNext(_:)), #selector(findPrevious(_:))]
         if let action = menuItem.action, textActions.contains(action) { return selectedItem?.kind.isText == true }
         if menuItem.action == #selector(deleteDraft(_:)) || menuItem.action == #selector(exportFile(_:)) { return selectedItem != nil }
         return true
