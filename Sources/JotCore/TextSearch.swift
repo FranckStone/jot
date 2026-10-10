@@ -22,3 +22,16 @@ public struct TextSearch {
         return expression.stringByReplacingMatches(in: text, range: NSRange(location: 0, length: (text as NSString).length), withTemplate: NSRegularExpression.escapedTemplate(for: replacement))
     }
 }
+
+/// Imported text: UTF-8, UTF-16 with a byte order mark, then GB18030, which also covers GBK and GB2312.
+public enum TextDecoding {
+    public static func decode(_ data: Data) -> String? {
+        let decoded: String?
+        if let utf8 = String(data: data, encoding: .utf8) { decoded = utf8 }
+        else if data.starts(with: [0xff, 0xfe]) || data.starts(with: [0xfe, 0xff]) { decoded = String(data: data, encoding: .utf16) }
+        else { decoded = String(data: data, encoding: gb18030) }
+        guard let decoded else { return nil }
+        return decoded.hasPrefix("\u{feff}") ? String(decoded.dropFirst()) : decoded
+    }
+    private static let gb18030 = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
+}

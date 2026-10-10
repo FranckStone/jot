@@ -18,4 +18,16 @@ final class TextSearchTests: XCTestCase {
         XCTAssertEqual(TextSearch(query: "").replacingAll(in: "hello", with: "x"), "hello")
         XCTAssertEqual(TextSearch(query: "aa").replacingAll(in: "aaaaa", with: ""), "a")
     }
+
+    func testDecodingCoversUnicodeAndGB18030() throws {
+        let sample = "中文 GBK 文本，含标点。"
+        XCTAssertEqual(TextDecoding.decode(Data(sample.utf8)), sample)
+        XCTAssertEqual(TextDecoding.decode(Data([0xef, 0xbb, 0xbf]) + Data(sample.utf8)), sample)
+        XCTAssertEqual(TextDecoding.decode(try XCTUnwrap(sample.data(using: .utf16))), sample)
+        let gbk = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
+        let encoded = try XCTUnwrap(sample.data(using: gbk))
+        XCTAssertNil(String(data: encoded, encoding: .utf8), "sample must not also be valid UTF-8")
+        XCTAssertEqual(TextDecoding.decode(encoded), sample)
+        XCTAssertNil(TextDecoding.decode(Data([0x81, 0x20])), "incomplete GB18030 sequence")
+    }
 }

@@ -340,8 +340,8 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
             if textExtensions.contains(ext) || info.contentType?.conforms(to: .plainText) == true {
                 guard (info.fileSize ?? 0) <= 10 * 1024 * 1024 else { throw failure("文本文件最多 10 MB，请拆分后添加。") }
                 let data = try Data(contentsOf: url)
-                guard let decoded = String(data: data, encoding: .utf8) ?? ((data.starts(with: [0xff, 0xfe]) || data.starts(with: [0xfe, 0xff])) ? String(data: data, encoding: .utf16) : nil) else { throw failure("无法读取文本编码，请转换为 UTF-8 或 UTF-16。") }
-                text = decoded.hasPrefix("\u{feff}") ? String(decoded.dropFirst()) : decoded
+                guard let decoded = TextDecoding.decode(data) else { throw failure("无法识别文本编码，请转换为 UTF-8、UTF-16 或 GB18030（GBK）。") }
+                text = decoded
                 kind = (ext == "csv" || ext == "tsv") ? .table : (ext == "json" ? .json : ItemKind.detect(text: text))
             } else if ext == "pdf" { kind = .pdf }
             else if info.contentType?.conforms(to: .image) == true { kind = .image }
