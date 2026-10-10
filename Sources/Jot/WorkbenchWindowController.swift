@@ -51,7 +51,7 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
         window.isReleasedWhenClosed = false; window.tabbingMode = .disallowed
         window.center(); window.setFrameAutosaveName("Jot.WorkbenchWindow")
         super.init(window: window); window.delegate = self
-        buildInterface(); rebuildCards(); updateList(); updateSelection()
+        buildInterface(); syncCards(); updateList(); updateSelection()
         scroll.magnification = board.zoom; updateZoomLabel()
         if !loaded.canSave { status.stringValue = "自动保存已暂停"; status.textColor = .systemRed }
         else { scheduleSave() }
@@ -185,9 +185,17 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
         sidebarToggle.setAccessibilityValue(sidebarCollapsed ? "已收起" : "已展开")
     }
 
-    private func rebuildCards() {
-        cards.values.forEach { $0.removeFromSuperview() }; cards.removeAll()
-        for item in board.items { installCard(item) }
+    /// Rebuilding a card reloads its PDF or image, so cards whose content is unchanged only move.
+    private func syncCards() {
+        let live = Set(board.items.map(\.id))
+        for (id, card) in cards where !live.contains(id) { card.removeFromSuperview(); cards.removeValue(forKey: id) }
+        for item in board.items {
+            if let card = cards[item.id], card.item.hasSameContent(as: item) {
+                card.frame = NSRect(x: item.x, y: item.y, width: item.width, height: item.height)
+            } else {
+                cards[item.id]?.removeFromSuperview(); installCard(item)
+            }
+        }
         resizeCanvas(); canvas.hasItems = !board.items.isEmpty; applyVisibility(); updateSelection()
     }
     private func installCard(_ item: BoardItem) {
@@ -493,7 +501,7 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
         guard let item = board.items.first(where: { $0.id == id }), !processing.contains(id) else { return }
         details[item.id]?.close(); recordUndo(board, name: "移除卡片")
         board.items.removeAll { $0.id == item.id }; board.selectedID = board.items.last?.id
-        rebuildCards(); updateList(); scheduleSave()
+        syncCards(); updateList(); scheduleSave()
     }
     private func recordUndo(_ old: Workbench, name: String) {
         history.registerUndo(withTarget: self) { target in
@@ -509,7 +517,7 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
             let removed = Set(current.items.map(\.id)).subtracting(restored.items.map(\.id))
             for id in removed { target.details[id]?.close() }
             target.recordUndo(current, name: name); target.board = restored
-            target.rebuildCards(); target.updateList(); target.scheduleSave()
+            target.syncCards(); target.updateList(); target.scheduleSave()
         }
         history.setActionName(name)
     }
@@ -522,7 +530,7 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
             board.items[index].x = x; board.items[index].y = y
             x += board.items[index].width + 32; rowHeight = max(rowHeight, board.items[index].height)
         }
-        rebuildCards(); scheduleSave()
+        syncCards(); scheduleSave()
     }
     @objc private func zoomIn() { setZoom(scroll.magnification + 0.15) }
     @objc private func zoomOut() { setZoom(scroll.magnification - 0.15) }

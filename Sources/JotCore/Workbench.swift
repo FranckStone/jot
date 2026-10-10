@@ -45,6 +45,12 @@ public struct BoardItem: Codable, Equatable, Identifiable {
         self.sourceID = sourceID; self.operation = operation; modifiedAt = Date()
     }
     public var displayTitle: String { title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "未命名\(kind.label)" : title }
+    /// True when a card rendered from `other` would look the same apart from its position and size.
+    public func hasSameContent(as other: BoardItem) -> Bool {
+        var placed = other
+        placed.x = x; placed.y = y; placed.width = width; placed.height = height
+        return placed == self
+    }
 }
 
 public struct Workbench: Codable, Equatable {

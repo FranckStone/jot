@@ -115,6 +115,16 @@ final class WorkbenchTests: XCTestCase {
         XCTAssertFalse(WorkbenchStore(directory: directory).load().canSave)
     }
 
+    func testSameContentIgnoresOnlyGeometry() {
+        let item = BoardItem(title: "卡片", text: "内容", x: 10, y: 20)
+        var moved = item; moved.x = 400; moved.y = 300; moved.width = 600; moved.height = 500
+        XCTAssertTrue(item.hasSameContent(as: moved))
+        var edited = moved; edited.text = "新内容"
+        XCTAssertFalse(item.hasSameContent(as: edited))
+        var renamed = item; renamed.title = "改名"
+        XCTAssertFalse(item.hasSameContent(as: renamed))
+    }
+
     func testUnsupportedVersionDoesNotFallBackAndOverwrite() throws {
         let store = WorkbenchStore(directory: directory)
         try store.save(Workbench()); try store.save(Workbench())

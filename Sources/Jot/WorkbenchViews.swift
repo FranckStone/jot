@@ -76,6 +76,8 @@ final class CardHandle: NSView {
 
 final class BoardCardView: NSView {
     let itemID: UUID
+    /// The item this card was built from; geometry may since have changed by dragging.
+    let item: BoardItem
     let titleLabel: NSTextField
     private let footerLabel: NSTextField
     private let preview: NSView
@@ -93,7 +95,7 @@ final class BoardCardView: NSView {
     var selected = false { didSet { refreshColors() } }
 
     init(item: BoardItem, url: URL?) {
-        itemID = item.id
+        itemID = item.id; self.item = item
         titleLabel = label(item.displayTitle, size: 13, weight: .semibold)
         footerLabel = label(item.operation.map { "来自处理 · \($0)" } ?? (item.kind.isText ? "\(item.text.count) 字符 · 双击标题编辑" : "\(item.kind.label) · 双击标题展开"), size: 10, color: Palette.muted)
         preview = makeItemPreview(item: item, url: url, compact: true)
