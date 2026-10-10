@@ -98,6 +98,23 @@ final class WorkbenchTests: XCTestCase {
         XCTAssertEqual(store.load().workbench.items.map(\.text), board.items.map(\.text))
     }
 
+    func testMissingFieldsFallBackToDefaults() throws {
+        let id = UUID()
+        let data = Data(#"{"version":1,"items":[{"id":"\#(id.uuidString)","text":"旧数据","futureField":true}]}"#.utf8)
+        try data.write(to: WorkbenchStore(directory: directory).fileURL)
+        let loaded = WorkbenchStore(directory: directory).load()
+        XCTAssertTrue(loaded.canSave); XCTAssertNil(loaded.warning)
+        let item = try XCTUnwrap(loaded.workbench.items.first)
+        XCTAssertEqual(item.id, id); XCTAssertEqual(item.text, "旧数据")
+        XCTAssertEqual(item.kind, .text); XCTAssertEqual(item.displayTitle, "未命名文本")
+        XCTAssertEqual(NSRect(x: item.x, y: item.y, width: item.width, height: item.height), NSRect(x: 40, y: 40, width: 360, height: 320))
+        XCTAssertEqual(item.modifiedAt, .distantPast)
+        XCTAssertEqual(loaded.workbench.zoom, 1); XCTAssertEqual(loaded.workbench.selectedID, id)
+        // A card without an id cannot be restored safely, so the file is still rejected.
+        try Data(#"{"version":1,"items":[{"text":"x"}]}"#.utf8).write(to: WorkbenchStore(directory: directory).fileURL)
+        XCTAssertFalse(WorkbenchStore(directory: directory).load().canSave)
+    }
+
     func testUnsupportedVersionDoesNotFallBackAndOverwrite() throws {
         let store = WorkbenchStore(directory: directory)
         try store.save(Workbench()); try store.save(Workbench())

@@ -83,6 +83,38 @@ public struct Workbench: Codable, Equatable {
     }
 }
 
+// Files written by older versions lack fields added later; missing keys fall back to defaults
+// instead of making the whole workbench unreadable. Decode every new field with decodeIfPresent.
+extension BoardItem {
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decode(UUID.self, forKey: .id)
+        title = try values.decodeIfPresent(String.self, forKey: .title) ?? ""
+        kind = try values.decodeIfPresent(ItemKind.self, forKey: .kind) ?? .text
+        text = try values.decodeIfPresent(String.self, forKey: .text) ?? ""
+        attachment = try values.decodeIfPresent(String.self, forKey: .attachment)
+        originalName = try values.decodeIfPresent(String.self, forKey: .originalName)
+        x = try values.decodeIfPresent(Double.self, forKey: .x) ?? 40
+        y = try values.decodeIfPresent(Double.self, forKey: .y) ?? 40
+        width = try values.decodeIfPresent(Double.self, forKey: .width) ?? 360
+        height = try values.decodeIfPresent(Double.self, forKey: .height) ?? 320
+        sourceID = try values.decodeIfPresent(UUID.self, forKey: .sourceID)
+        operation = try values.decodeIfPresent(String.self, forKey: .operation)
+        // Undo keeps the newer of two edits; an unknown date must never win.
+        modifiedAt = try values.decodeIfPresent(Date.self, forKey: .modifiedAt) ?? .distantPast
+    }
+}
+
+extension Workbench {
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        version = try values.decodeIfPresent(Int.self, forKey: .version) ?? 1
+        items = try values.decodeIfPresent([BoardItem].self, forKey: .items) ?? []
+        selectedID = try values.decodeIfPresent(UUID.self, forKey: .selectedID)
+        zoom = try values.decodeIfPresent(Double.self, forKey: .zoom) ?? 1
+    }
+}
+
 public struct WorkbenchLoadResult {
     public let workbench: Workbench
     public let warning: String?
