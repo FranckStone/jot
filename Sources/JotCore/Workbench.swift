@@ -257,6 +257,41 @@ public final class WorkbenchStore {
         return name
     }
 
+    public func attachmentNames() -> [String] {
+        (try? FileManager.default.contentsOfDirectory(atPath: attachmentsURL.path))?.filter { !$0.hasPrefix(".") } ?? []
+    }
+    /// Replaceable for tests; the Trash keeps a mistaken cleanup recoverable.
+    public var discard: (URL) throws -> Void = { try FileManager.default.trashItem(at: $0, resultingItemURL: nil) }
+
+    /// Moves candidates that no saved state refers to into the Trash, returning their names.
+    /// Backups, snapshots and preserved unreadable files all count, so restoring any of them still finds its files.
+    /// Pass names listed before the session added anything, so a fresh import is never a candidate.
+    @discardableResult
+    public func discardUnreferencedAttachments(_ candidates: [String], current: Workbench) -> [String] {
+        guard canOverwrite else { return [] }
+        var unreferenced = Set(candidates).subtracting(current.items.compactMap(\.attachment))
+        let files = FileManager.default
+        let saved = ((try? files.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []).filter { $0.pathExtension == "json" } + snapshots()
+        for url in saved where !unreferenced.isEmpty {
+            guard let data = try? Data(contentsOf: url) else { return [] }
+            if let refs = try? JSONDecoder().decode(AttachmentReferences.self, from: data) {
+                unreferenced.subtract(refs.names)
+            } else {
+                // Unreadable files are searched as raw text so they keep their attachments too.
+                unreferenced = unreferenced.filter { data.range(of: Data($0.utf8)) == nil }
+            }
+        }
+        return unreferenced.sorted().filter { name in
+            guard let url = attachmentURL(for: BoardItem(attachment: name)) else { return false }
+            return (try? discard(url)) != nil
+        }
+    }
+    private struct AttachmentReferences: Decodable {
+        struct Item: Decodable { let attachment: String? }
+        let items: [Item]
+        var names: [String] { items.compactMap(\.attachment) }
+    }
+
     public func attachmentURL(for item: BoardItem) -> URL? {
         guard let name = item.attachment, !name.isEmpty, name != ".", name != "..", !name.contains("/"), !name.contains("\\") else { return nil }
         return attachmentsURL.appendingPathComponent(name)

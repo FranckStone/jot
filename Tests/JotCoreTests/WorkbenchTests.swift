@@ -146,6 +146,22 @@ final class WorkbenchTests: XCTestCase {
         XCTAssertEqual(permissions?.intValue, 0o600)
     }
 
+    func testOnlyAttachmentsNoSavedStateMentionsAreDiscarded() throws {
+        let store = WorkbenchStore(directory: directory)
+        store.discard = { try FileManager.default.removeItem(at: $0) }
+        let source = directory.appendingPathComponent("source.txt"); try Data("x".utf8).write(to: source)
+        let names = try (0..<5).map { _ in try store.copyAttachment(from: source) }
+        var board = Workbench()
+        board.items = [BoardItem(kind: .file, attachment: names[0])]; try store.save(board)   // snapshot and backup keep 0
+        board.items = [BoardItem(kind: .file, attachment: names[1])]; try store.save(board)   // workbench.json keeps 1
+        try Data(#"broken { "attachment" : "\#(names[2])""#.utf8)
+            .write(to: directory.appendingPathComponent("workbench-unreadable-test.json"))       // raw text keeps 2
+        var live = Workbench(); live.items = [BoardItem(kind: .file, attachment: names[3])]
+        let discarded = store.discardUnreferencedAttachments(store.attachmentNames(), current: live)
+        XCTAssertEqual(discarded, [names[4]])
+        XCTAssertEqual(Set(store.attachmentNames()), Set(names.prefix(4)))
+    }
+
     func testUnsupportedVersionDoesNotFallBackAndOverwrite() throws {
         let store = WorkbenchStore(directory: directory)
         try store.save(Workbench()); try store.save(Workbench())

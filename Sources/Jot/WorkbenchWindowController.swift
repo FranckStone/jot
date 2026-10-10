@@ -54,7 +54,12 @@ final class WorkbenchWindowController: NSWindowController, NSWindowDelegate, NST
         buildInterface(); syncCards(); updateList(); updateSelection()
         scroll.magnification = board.zoom; updateZoomLabel()
         if !loaded.canSave { status.stringValue = "自动保存已暂停"; status.textColor = .systemRed }
-        else { scheduleSave() }
+        else {
+            // Listed now so attachments imported during this session are never candidates.
+            let candidates = store.attachmentNames(), current = board, store = store
+            saveQueue.async { store.discardUnreferencedAttachments(candidates, current: current) }
+            scheduleSave()
+        }
         eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .leftMouseDown) { [weak self] event in
             guard let self, event.window === self.window else { return event }
             let point = self.canvas.convert(event.locationInWindow, from: nil)
