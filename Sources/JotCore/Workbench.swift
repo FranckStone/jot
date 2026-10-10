@@ -134,6 +134,12 @@ public final class WorkbenchStore {
     public var fileURL: URL { directory.appendingPathComponent("workbench.json") }
     public var backupURL: URL { directory.appendingPathComponent("workbench.backup.json") }
     public var attachmentsURL: URL { directory.appendingPathComponent("attachments", isDirectory: true) }
+    public var snapshotsURL: URL { directory.appendingPathComponent("snapshots", isDirectory: true) }
+    public static let snapshotInterval: TimeInterval = 60 * 60
+    public static let snapshotLimit = 24
+    /// Replaceable for tests.
+    public var now: () -> Date = Date.init
+    private var snapshotTakenThisSession = false
     private var canOverwrite = true
     // Size and date of the file this store last read or wrote, so saves can skip re-validating it.
     private var validFileStamp: [FileAttributeKey: AnyHashable]?
@@ -189,6 +195,40 @@ public final class WorkbenchStore {
         try data.write(to: fileURL, options: .atomic)
         try files.setAttributes([.posixPermissions: 0o600], ofItemAtPath: fileURL.path)
         validFileStamp = fileStamp()
+        takeSnapshotIfDue()
+    }
+
+    /// Dated copies outlive the single backup, so a mistake can be undone hours later.
+    public func snapshots() -> [URL] {
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: snapshotsURL.path)) ?? []
+        return names.filter { $0.hasPrefix("workbench-") && $0.hasSuffix(".json") }.sorted()
+            .map { snapshotsURL.appendingPathComponent($0) }
+    }
+    private func takeSnapshotIfDue() {
+        let files = FileManager.default
+        let existing = snapshots()
+        let date = now()
+        if snapshotTakenThisSession, let latest = existing.last,
+           let taken = Self.snapshotDate(latest), date.timeIntervalSince(taken) < Self.snapshotInterval { return }
+        // A snapshot is a convenience; failing to take one never fails the save.
+        do {
+            try files.createDirectory(at: snapshotsURL, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+            let destination = snapshotsURL.appendingPathComponent("workbench-\(Self.snapshotFormatter.string(from: date)).json")
+            if files.fileExists(atPath: destination.path) { try files.removeItem(at: destination) }
+            try files.copyItem(at: fileURL, to: destination)
+            snapshotTakenThisSession = true
+            for old in snapshots().dropLast(Self.snapshotLimit) { try? files.removeItem(at: old) }
+        } catch { }
+    }
+    private static let snapshotFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX"); formatter.timeZone = TimeZone(identifier: "UTC")
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        return formatter
+    }()
+    private static func snapshotDate(_ url: URL) -> Date? {
+        let name = url.deletingPathExtension().lastPathComponent
+        return snapshotFormatter.date(from: String(name.dropFirst("workbench-".count)))
     }
     private func fileStamp() -> [FileAttributeKey: AnyHashable]? {
         guard let attributes = try? FileManager.default.attributesOfItem(atPath: fileURL.path),

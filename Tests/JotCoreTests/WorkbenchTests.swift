@@ -125,6 +125,27 @@ final class WorkbenchTests: XCTestCase {
         XCTAssertFalse(item.hasSameContent(as: renamed))
     }
 
+    func testSnapshotsTakenPerSessionAndHourlyWithLimit() throws {
+        var clock = Date(timeIntervalSince1970: 1_800_000_000)
+        let store = WorkbenchStore(directory: directory); store.now = { clock }
+        var board = Workbench(); board.items = [BoardItem(text: "v0")]
+        try store.save(board)
+        XCTAssertEqual(store.snapshots().count, 1, "first save of a session takes a snapshot")
+        clock += 600; board.items[0].text = "v1"; try store.save(board)
+        XCTAssertEqual(store.snapshots().count, 1, "no second snapshot within the hour")
+        clock += WorkbenchStore.snapshotInterval; board.items[0].text = "v2"; try store.save(board)
+        XCTAssertEqual(store.snapshots().count, 2)
+        let latest = try JSONDecoder().decode(Workbench.self, from: Data(contentsOf: XCTUnwrap(store.snapshots().last)))
+        XCTAssertEqual(latest.items.first?.text, "v2")
+        let restarted = WorkbenchStore(directory: directory); restarted.now = { clock + 1 }
+        try restarted.save(board)
+        XCTAssertEqual(restarted.snapshots().count, 3, "a new session snapshots even within the hour")
+        for _ in 0..<30 { clock += WorkbenchStore.snapshotInterval; try store.save(board) }
+        XCTAssertEqual(store.snapshots().count, WorkbenchStore.snapshotLimit)
+        let permissions = try FileManager.default.attributesOfItem(atPath: XCTUnwrap(store.snapshots().last).path)[.posixPermissions] as? NSNumber
+        XCTAssertEqual(permissions?.intValue, 0o600)
+    }
+
     func testUnsupportedVersionDoesNotFallBackAndOverwrite() throws {
         let store = WorkbenchStore(directory: directory)
         try store.save(Workbench()); try store.save(Workbench())
