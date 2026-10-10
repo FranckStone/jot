@@ -71,6 +71,8 @@ bash scripts/build-app.sh
 open dist/Jot.app
 ```
 
+推送到 `main` 或提交拉取请求时，GitHub Actions 会在 Xcode 27 环境运行单元测试、卡片布局检查和打包（`.github/workflows/ci.yml`）。
+
 在 Xcode 中打开 `Package.swift` 可以直接编辑与调试。打包脚本显式使用当前 Xcode 的 macOS SDK，并校验二进制中的 SDK 版本；最低运行系统仍为 macOS 13。脚本使用本机架构，当前产物为 Apple Silicon 版本。`Jot.app` 使用本地临时签名，尚未进行 Developer ID 签名或 Apple 公证。
 
 修改图标时，同步更新 `Resources/icon.svg` 与 `Sources/Jot/Components.swift` 中的 `LogoView`，再运行 `bash scripts/build-icon.sh`（需要 `rsvg-convert`、系统自带的 `sips` / `iconutil` 和 Python 3），重新生成 PNG、各尺寸图标、ICNS 及来源记录，最后运行打包脚本。
